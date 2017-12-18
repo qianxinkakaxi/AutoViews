@@ -1,4 +1,4 @@
-package cn.xports.autoviewslib;
+package cn.xports.autoviews;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

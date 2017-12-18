@@ -2,43 +2,42 @@ package cn.xports.autoviews;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import cn.xports.autoviews.util.AutoUtil;
 import cn.xports.autoviews.util.WindowSizeUtil;
 
-
 /**
- * Created by qianxin on 2017/8/10.
+ * Created by qianxin on 2017/10/23.
  */
 
-public class AutoFrameLayout extends FrameLayout {
+public class AutoLinearLayoutCompat extends LinearLayoutCompat {
 
     private double widthRadius;
 
     private double heightRadius;
+    private boolean isReveal;
 
-    public AutoFrameLayout(Context context) {
+    public AutoLinearLayoutCompat(Context context) {
         super(context);
         initWidthAndHeightRadius(context, null);
     }
 
     private void initWidthAndHeightRadius(Context context, AttributeSet attrs) {
 
-        float width = WindowSizeUtil.getScreenWidth(context);
+        int width = WindowSizeUtil.getScreenWidth(context);
 
-        float height = WindowSizeUtil.getScreenHeight(context);
+        int height = WindowSizeUtil.getScreenHeight(context);
 
         TypedArray a =
                 context.obtainStyledAttributes(attrs, R.styleable.AutoViews);
-        boolean isReveal = a.getBoolean(R.styleable.AutoViews_is_reveal, false);
+        isReveal = a.getBoolean(R.styleable.AutoViews_is_reveal, false);
         a.recycle();
         if (isReveal) {
             widthRadius = width / AutoUtil.getDesignHeight();
@@ -51,12 +50,12 @@ public class AutoFrameLayout extends FrameLayout {
     }
 
 
-    public AutoFrameLayout(Context context, AttributeSet attrs) {
+    public AutoLinearLayoutCompat(Context context, AttributeSet attrs) {
         super(context, attrs);
         initWidthAndHeightRadius(context, attrs);
     }
 
-    public AutoFrameLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public AutoLinearLayoutCompat(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initWidthAndHeightRadius(context, attrs);
 
@@ -66,12 +65,8 @@ public class AutoFrameLayout extends FrameLayout {
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
 
+        LinearLayoutCompat.LayoutParams lp = (LinearLayoutCompat.LayoutParams) params;
 
-        LayoutParams lp = (LayoutParams) params;
-        if (!lp.autoSize) {
-            super.addView(child, index, params);
-            return;
-        }
         lp.leftMargin = (int) Math.ceil(lp.leftMargin * widthRadius);
         lp.rightMargin = (int) Math.ceil(lp.rightMargin * widthRadius);
         lp.topMargin = (int) Math.ceil(lp.topMargin * heightRadius);
@@ -92,6 +87,7 @@ public class AutoFrameLayout extends FrameLayout {
         if (child instanceof TextView) {
             //TODO  字的大小有点搞了，真心不知道按宽的比例还是高的比例 rn也遇到同样的问题
             TextView textView = (TextView) child;
+
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     (float) (textView.getTextSize() * (widthRadius > heightRadius ? heightRadius : widthRadius)));
         }
@@ -99,22 +95,24 @@ public class AutoFrameLayout extends FrameLayout {
         super.addView(child, index, params);
     }
 
+
     @Override
-    protected FrameLayout.LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
+    protected LinearLayoutCompat.LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
         return new LayoutParams(p);
     }
 
     @Override
-    protected FrameLayout.LayoutParams generateDefaultLayoutParams() {
+    protected LinearLayoutCompat.LayoutParams generateDefaultLayoutParams() {
         return new LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
     }
 
     @Override
-    public FrameLayout.LayoutParams generateLayoutParams(AttributeSet attrs) {
+    public LinearLayoutCompat.LayoutParams generateLayoutParams(AttributeSet attrs) {
         return new LayoutParams(getContext(), attrs);
     }
 
-    public static class LayoutParams extends FrameLayout.LayoutParams {
+
+    public static class LayoutParams extends LinearLayoutCompat.LayoutParams {
 
         public boolean autoSize = true;
 
@@ -146,5 +144,7 @@ public class AutoFrameLayout extends FrameLayout {
         public LayoutParams(MarginLayoutParams source) {
             super(source);
         }
+
+
     }
 }

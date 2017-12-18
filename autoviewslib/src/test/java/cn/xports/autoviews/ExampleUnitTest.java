@@ -1,4 +1,4 @@
-package cn.xports.autoviewslib;
+package cn.xports.autoviews;
 
 import org.junit.Test;
 
