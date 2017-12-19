@@ -31,9 +31,9 @@ public class AutoRelativeLayout extends RelativeLayout {
     private void initWidthAndHeightRadius(Context context, AttributeSet attrs) {
 
 
-        int width = WindowSizeUtil.getScreenWidth(context);
+        float width = WindowSizeUtil.getScreenWidth(context);
 
-        int height = WindowSizeUtil.getScreenHeight(context);
+        float height = WindowSizeUtil.getScreenHeight(context);
 
         TypedArray a =
                 context.obtainStyledAttributes(attrs, R.styleable.AutoViews);
@@ -41,11 +41,11 @@ public class AutoRelativeLayout extends RelativeLayout {
         a.recycle();
         if (isReveal) {
             widthRadius = width / AutoUtil.getDesignHeight();
-            heightRadius = height/ AutoUtil.getDesignWidth();
+            heightRadius = height / AutoUtil.getDesignWidth();
 
         } else {
             widthRadius = width / AutoUtil.getDesignWidth();
-            heightRadius = height  / AutoUtil.getDesignHeight();
+            heightRadius = height / AutoUtil.getDesignHeight();
         }
     }
 

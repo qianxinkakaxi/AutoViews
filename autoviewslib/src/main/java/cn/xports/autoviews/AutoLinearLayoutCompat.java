@@ -31,9 +31,9 @@ public class AutoLinearLayoutCompat extends LinearLayoutCompat {
 
     private void initWidthAndHeightRadius(Context context, AttributeSet attrs) {
 
-        int width = WindowSizeUtil.getScreenWidth(context);
+        float width = WindowSizeUtil.getScreenWidth(context);
 
-        int height = WindowSizeUtil.getScreenHeight(context);
+        float height = WindowSizeUtil.getScreenHeight(context);
 
         TypedArray a =
                 context.obtainStyledAttributes(attrs, R.styleable.AutoViews);
