@@ -30,9 +30,9 @@ public class AutoUtil {
         if (builder.designHeight <= 0)
             throw new IllegalArgumentException("高保真高度必须大于0");
 
-        this.context = context;
-        this.designHeight = designHeight;
-        this.designWidth = designWidth;
+        this.context = builder.context;
+        this.designHeight = builder.designHeight;
+        this.designWidth = builder.designWidth;
         SharedPreferences sp = context.getSharedPreferences("auto_view_specification", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putInt("designHeight", designHeight);

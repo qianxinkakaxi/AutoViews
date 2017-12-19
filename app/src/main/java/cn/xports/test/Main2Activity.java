@@ -1,7 +1,8 @@
-package cn.xports.autoviews;
+package cn.xports.test;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
 
 public class Main2Activity extends AppCompatActivity {
 
