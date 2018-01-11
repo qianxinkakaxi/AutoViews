@@ -35,17 +35,19 @@ public class AutoFrameLayout extends FrameLayout {
 
         float height = WindowSizeUtil.getScreenHeight(context);
 
-        TypedArray a =
-                context.obtainStyledAttributes(attrs, R.styleable.AutoViews);
-        boolean isReveal = a.getBoolean(R.styleable.AutoViews_is_reveal, false);
-        a.recycle();
+        boolean isReveal = false;
+        if (attrs != null) {
+            TypedArray a =
+                    context.obtainStyledAttributes(attrs, R.styleable.AutoViews);
+            isReveal = a.getBoolean(R.styleable.AutoViews_is_reveal, false);
+            a.recycle();
+        }
         if (isReveal) {
             widthRadius = width / AutoUtil.getDesignHeight();
-            heightRadius = height/ AutoUtil.getDesignWidth();
-
+            heightRadius = height / AutoUtil.getDesignWidth();
         } else {
             widthRadius = width / AutoUtil.getDesignWidth();
-            heightRadius = height  / AutoUtil.getDesignHeight();
+            heightRadius = height / AutoUtil.getDesignHeight();
         }
     }
 
