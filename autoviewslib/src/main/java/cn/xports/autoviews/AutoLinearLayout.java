@@ -2,6 +2,8 @@ package cn.xports.autoviews;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -44,13 +46,12 @@ public class AutoLinearLayout extends LinearLayout {
         }
         if (isReveal) {
             widthRadius = width / AutoUtil.getDesignHeight();
-            heightRadius = height/ AutoUtil.getDesignWidth();
+            heightRadius = height / AutoUtil.getDesignWidth();
 
         } else {
             widthRadius = width / AutoUtil.getDesignWidth();
-            heightRadius = height  / AutoUtil.getDesignHeight();
+            heightRadius = height / AutoUtil.getDesignHeight();
         }
-
 
     }
 
@@ -99,8 +100,9 @@ public class AutoLinearLayout extends LinearLayout {
             TextView textView = (TextView) child;
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     (float) (textView.getTextSize() * (widthRadius > heightRadius ? heightRadius : widthRadius)));
+            textView.setCompoundDrawablePadding((int)
+                    Math.ceil(textView.getCompoundDrawablePadding() * widthRadius));
         }
-
         super.addView(child, index, params);
     }
 
@@ -152,4 +154,6 @@ public class AutoLinearLayout extends LinearLayout {
             super(source);
         }
     }
+
+
 }

@@ -24,6 +24,7 @@ public class AutoFrameLayout extends FrameLayout {
 
     private double heightRadius;
 
+
     public AutoFrameLayout(Context context) {
         super(context);
         initWidthAndHeightRadius(context, null);
@@ -95,8 +96,9 @@ public class AutoFrameLayout extends FrameLayout {
             TextView textView = (TextView) child;
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     (float) (textView.getTextSize() * (widthRadius > heightRadius ? heightRadius : widthRadius)));
+            textView.setCompoundDrawablePadding((int)
+                    Math.ceil(textView.getCompoundDrawablePadding() * widthRadius));
         }
-
         super.addView(child, index, params);
     }
 

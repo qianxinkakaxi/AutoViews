@@ -2,11 +2,14 @@ package cn.xports.autoviews;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,7 +25,6 @@ public class AutoLinearLayoutCompat extends LinearLayoutCompat {
     private double widthRadius;
 
     private double heightRadius;
-    private boolean isReveal;
 
     public AutoLinearLayoutCompat(Context context) {
         super(context);
@@ -44,12 +46,13 @@ public class AutoLinearLayoutCompat extends LinearLayoutCompat {
         }
         if (isReveal) {
             widthRadius = width / AutoUtil.getDesignHeight();
-            heightRadius = height/ AutoUtil.getDesignWidth();
+            heightRadius = height / AutoUtil.getDesignWidth();
 
         } else {
             widthRadius = width / AutoUtil.getDesignWidth();
-            heightRadius = height  / AutoUtil.getDesignHeight();
+            heightRadius = height / AutoUtil.getDesignHeight();
         }
+
     }
 
 
@@ -68,7 +71,12 @@ public class AutoLinearLayoutCompat extends LinearLayoutCompat {
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
 
-        LinearLayoutCompat.LayoutParams lp = (LinearLayoutCompat.LayoutParams) params;
+        LayoutParams lp = (LayoutParams) params;
+
+        if (!lp.autoSize) {
+            super.addView(child, index, params);
+            return;
+        }
 
         lp.leftMargin = (int) Math.ceil(lp.leftMargin * widthRadius);
         lp.rightMargin = (int) Math.ceil(lp.rightMargin * widthRadius);
@@ -87,20 +95,23 @@ public class AutoLinearLayoutCompat extends LinearLayoutCompat {
                 (int) Math.ceil(child.getPaddingRight() * widthRadius),
                 (int) Math.ceil(child.getPaddingBottom() * heightRadius));
 
+
         if (child instanceof TextView) {
             //TODO  字的大小有点搞了，真心不知道按宽的比例还是高的比例 rn也遇到同样的问题
             TextView textView = (TextView) child;
 
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     (float) (textView.getTextSize() * (widthRadius > heightRadius ? heightRadius : widthRadius)));
+            textView.setCompoundDrawablePadding((int)
+                    Math.ceil(textView.getCompoundDrawablePadding() * widthRadius));
         }
-
         super.addView(child, index, params);
     }
 
 
     @Override
     protected LinearLayoutCompat.LayoutParams generateLayoutParams(ViewGroup.LayoutParams p) {
+
         return new LayoutParams(p);
     }
 

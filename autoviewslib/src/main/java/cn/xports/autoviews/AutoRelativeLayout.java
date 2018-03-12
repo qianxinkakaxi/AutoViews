@@ -91,14 +91,11 @@ public class AutoRelativeLayout extends RelativeLayout {
         if (child instanceof TextView) {
             //TODO  字的大小有点搞了，真心不知道按宽的比例还是高的比例 rn也遇到同样的问题
             TextView textView = (TextView) child;
-
-            textView.setCompoundDrawablePadding((int)
-                    (textView.getCompoundDrawablePadding() * (widthRadius > heightRadius ? heightRadius : widthRadius)));
-
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
                     (float) (textView.getTextSize() * (widthRadius > heightRadius ? heightRadius : widthRadius)));
+            textView.setCompoundDrawablePadding((int)
+                    Math.ceil(textView.getCompoundDrawablePadding() * widthRadius));
         }
-
         super.addView(child, index, params);
     }
 
