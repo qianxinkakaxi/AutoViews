@@ -1,7 +1,9 @@
 package cn.xports.autoviews.util;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 /**
  * Created by qianxin on 2017/12/14.
@@ -25,6 +27,8 @@ public class AutoUtil {
     private void init() {
         if (builder.context == null)
             throw new IllegalArgumentException("context对象不能为空");
+        if (!(builder.context instanceof Application))
+            Log.w("AutoUtil", "不是application的content，可能引起内存泄露");
         if (builder.designWidth <= 0)
             throw new IllegalArgumentException("高保真宽度必须大于0");
         if (builder.designHeight <= 0)

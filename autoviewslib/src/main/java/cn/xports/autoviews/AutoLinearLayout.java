@@ -41,7 +41,7 @@ public class AutoLinearLayout extends LinearLayout {
         if (attrs != null) {
             TypedArray a =
                     context.obtainStyledAttributes(attrs, R.styleable.AutoViews);
-            isReveal = a.getBoolean(R.styleable.AutoViews_is_reveal, false);
+            isReveal = a.getBoolean(R.styleable.AutoViews_isReveal, false);
             a.recycle();
         }
         if (isReveal) {
@@ -131,8 +131,8 @@ public class AutoLinearLayout extends LinearLayout {
         public LayoutParams(Context c, AttributeSet attrs) {
             super(c, attrs);
             TypedArray a =
-                    c.obtainStyledAttributes(attrs, R.styleable.AutoViewResize);
-            autoSize = a.getBoolean(R.styleable.AutoViewResize_autoSize, true);
+                    c.obtainStyledAttributes(attrs, R.styleable.AutoViews);
+            autoSize = a.getBoolean(R.styleable.AutoViews_autoSize, true);
             a.recycle();
         }
 

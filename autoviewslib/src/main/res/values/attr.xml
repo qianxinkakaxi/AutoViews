@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="AutoViews">
-        <attr name="is_reveal" format="boolean" />
-    </declare-styleable>
-
-    <declare-styleable name="AutoViewResize">
+        <attr name="isReveal" format="boolean" />
         <attr name="autoSize" format="boolean" />
     </declare-styleable>
 </resources>
