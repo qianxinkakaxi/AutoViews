@@ -426,5 +426,161 @@ c.关于图片：建议用矢量图代替位图，保证拉伸的时候不失真
 
 c.未完成：暂时没有对shape之类的做处理，效果影响不大(后期有时间的话可能会优化)
 
+### 6.原理分析
+
+#### a.Android Xml布局文件的解析流程
+
+ 
+1.setContentView(R.layout.activity_second);
+ 
+2.AppCompatDelegateImplV9的onCreate方法，首先会生成decorView，从 contentParent.removeAllViews()可以看出来contentParent不为空，再调用LayoutInflater.from(mContext).inflate(resId, contentParent);进行解析
+
+```
+@Override
+public void setContentView(int resId) {
+    ensureSubDecor();
+    ViewGroup contentParent = (ViewGroup) mSubDecor.findViewById(android.R.id.content);
+    contentParent.removeAllViews();
+    LayoutInflater.from(mContext).inflate(resId, contentParent);
+    mOriginalWindowCallback.onContentChanged();
+}
+```
+
+3.执行LayoutInflate的inflate方法，此时root!=null为true
+
+```
+public View inflate(@LayoutRes int resource, @Nullable ViewGroup root) {
+    return inflate(resource, root, root != null);
+}
+```
+
+4.获取Xml解析工具，然后调用inflate(parser, root, attachToRoot)进行解析
+
+```
+public View inflate(@LayoutRes int resource, @Nullable ViewGroup root, boolean attachToRoot) {
+    final Resources res = getContext().getResources();
+    if (DEBUG) {
+        Log.d(TAG, "INFLATING from resource: \"" + res.getResourceName(resource) + "\" ("
+                + Integer.toHexString(resource) + ")");
+    }
+
+    final XmlResourceParser parser = res.getLayout(resource);
+    try {
+        return inflate(parser, root, attachToRoot);
+    } finally {
+        parser.close();
+    }
+}
+```
+
+5.暂时不考虑merge的情况，会执行到下面的代码块
+
+```
+{
+    // Temp is the root view that was found in the xml
+    // 这串代码会生成我们自己xml对应的的rootview
+    final View temp = createViewFromTag(root, name, inflaterContext, attrs);
+
+    ViewGroup.LayoutParams params = null;
+
+    if (root != null) {
+        if (DEBUG) {
+            System.out.println("Creating params from root: " +
+                    root);
+        }
+        // Create layout params that match root, if supplied
+        // 这个是调用viewgroup的generateLayoutParams方法，给child设置layoutParams
+        // 此时，attachToRoot为true，所以不会执行 temp.setLayoutParams(params);
+        params = root.generateLayoutParams(attrs);
+        if (!attachToRoot) {
+            // Set the layout params for temp if we are not
+            // attaching. (If we are, we use addView, below)
+            temp.setLayoutParams(params);
+        }
+    }
+
+    if (DEBUG) {
+        System.out.println("-----> start inflating children");
+    }
+
+    // Inflate all children under temp against its context.
+    // 接着去遍历叶子节点
+    rInflateChildren(parser, temp, attrs, true);
+
+    if (DEBUG) {
+        System.out.println("-----> done inflating children");
+    }
+
+    // We are supposed to attach all the views we found (int temp)
+    // to root. Do that now.
+    if (root != null && attachToRoot) {
+        root.addView(temp, params);
+    }
+
+    // Decide whether to return the root that was passed in or the
+    // top view found in xml.
+    if (root == null || !attachToRoot) {
+        result = temp;
+    }
+}
+final void rInflateChildren(XmlPullParser parser, View parent, AttributeSet attrs,
+        boolean finishInflate) throws XmlPullParserException, IOException {
+    rInflate(parser, parent, parent.getContext(), attrs, finishInflate);
+}
+void rInflate(XmlPullParser parser, View parent, Context context,
+        AttributeSet attrs, boolean finishInflate) throws XmlPullParserException, IOException {
+
+    final int depth = parser.getDepth();
+    int type;
+    boolean pendingRequestFocus = false;
+
+    while (((type = parser.next()) != XmlPullParser.END_TAG ||
+            parser.getDepth() > depth) && type != XmlPullParser.END_DOCUMENT) {
+
+        if (type != XmlPullParser.START_TAG) {
+            continue;
+        }
+
+        final String name = parser.getName();
+
+        if (TAG_REQUEST_FOCUS.equals(name)) {
+            pendingRequestFocus = true;
+            consumeChildElements(parser);
+        } else if (TAG_TAG.equals(name)) {
+            parseViewTag(parser, parent, attrs);
+        } else if (TAG_INCLUDE.equals(name)) {
+            if (parser.getDepth() == 0) {
+                throw new InflateException("<include /> cannot be the root element");
+            }
+            parseInclude(parser, context, parent, attrs);
+        } else if (TAG_MERGE.equals(name)) {
+            throw new InflateException("<merge /> must be the root element");
+        } else {
+            // 遍历的时候会执行到这个分支里面来，在这个分支，会再次遍历子viewTree，
+            // 这个代码可以看出，最先加到viewGroup里面的是最底下的叶子节点，
+            // 有点类似于树的后序遍历,
+            // 先将叶子节点和对应的layoutParams组合在一起，add到对应的viewGroup中
+            // 叶子节点的layoutParams是有父节点的generateLayoutParams去生成的
+            final View view = createViewFromTag(parent, name, context, attrs);
+            final ViewGroup viewGroup = (ViewGroup) parent;
+            final ViewGroup.LayoutParams params = viewGroup.generateLayoutParams(attrs);
+            rInflateChildren(parser, view, attrs, true);
+            viewGroup.addView(view, params);
+        }
+    }
+
+    if (pendingRequestFocus) {
+        parent.restoreDefaultFocus();
+    }
+
+    if (finishInflate) {
+        parent.onFinishInflate();
+    }
+}
+```
+
+#### b.view的测量流程
+未完待续。。。。。。
+
 
 
