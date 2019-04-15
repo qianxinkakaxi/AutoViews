@@ -23,6 +23,9 @@ public class AutoRelativeLayout extends RelativeLayout {
 
     private double heightRadius;
 
+    private boolean autoSize;
+
+
     public AutoRelativeLayout(Context context) {
         super(context);
         initWidthAndHeightRadius(context, null);
@@ -40,6 +43,7 @@ public class AutoRelativeLayout extends RelativeLayout {
             TypedArray a =
                     context.obtainStyledAttributes(attrs, R.styleable.AutoViews);
             isReveal = a.getBoolean(R.styleable.AutoViews_isReveal, false);
+            autoSize = a.getBoolean(R.styleable.AutoViews_autoSize, true);
             a.recycle();
         }
         if (isReveal) {
@@ -68,7 +72,10 @@ public class AutoRelativeLayout extends RelativeLayout {
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
 
         LayoutParams lp = (LayoutParams) params;
-
+        if (!autoSize || !lp.autoSize) {
+            super.addView(child, index, params);
+            return;
+        }
         lp.leftMargin = (int) Math.ceil(lp.leftMargin * widthRadius);
         lp.rightMargin = (int) Math.ceil(lp.rightMargin * widthRadius);
         lp.topMargin = (int) Math.ceil(lp.topMargin * heightRadius);

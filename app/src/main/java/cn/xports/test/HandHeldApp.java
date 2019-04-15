@@ -13,9 +13,9 @@ public class HandHeldApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        AutoUtil.with(getApplicationContext()).
-                setDesignHeight(1280).
-                setDesignWidth(720).
-                init();
+        AutoUtil.with(this)
+                .setDesignHeight(667)
+                .setDesignWidth(375)
+                .init();
     }
 }

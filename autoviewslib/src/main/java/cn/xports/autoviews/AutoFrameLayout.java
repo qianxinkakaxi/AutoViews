@@ -24,6 +24,7 @@ public class AutoFrameLayout extends FrameLayout {
 
     private double heightRadius;
 
+    private boolean autoSize;
 
     public AutoFrameLayout(Context context) {
         super(context);
@@ -41,6 +42,7 @@ public class AutoFrameLayout extends FrameLayout {
             TypedArray a =
                     context.obtainStyledAttributes(attrs, R.styleable.AutoViews);
             isReveal = a.getBoolean(R.styleable.AutoViews_isReveal, false);
+            autoSize = a.getBoolean(R.styleable.AutoViews_autoSize, true);
             a.recycle();
         }
         if (isReveal) {
@@ -70,7 +72,7 @@ public class AutoFrameLayout extends FrameLayout {
 
 
         LayoutParams lp = (LayoutParams) params;
-        if (!lp.autoSize) {
+        if (!autoSize || !lp.autoSize) {
             super.addView(child, index, params);
             return;
         }

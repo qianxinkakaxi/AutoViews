@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cn.xports.autoviews.AutoRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F7FA"
+    >
+
+    <cn.xports.autoviews.AutoLinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:orientation="vertical"
+        app:divider="@drawable/line"
+        app:showDividers="middle">
+
+        <cn.xports.autoviews.AutoRelativeLayout
+            android:id="@+id/tmp"
+            android:layout_width="match_parent"
+            android:layout_height="43px">
+
+            <ImageView
+                android:layout_width="10px"
+                android:layout_height="18px"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="14px"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/icon_back" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="填写银行卡信息"
+                android:textColor="#333333"
+                android:textSize="18px" />
+
+        </cn.xports.autoviews.AutoRelativeLayout>
+
+        <cn.xports.autoviews.AutoRelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="64px"
+           >
+
+            <ImageView
+                android:layout_width="25px"
+                android:layout_height="25px"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="14px"
+                android:scaleType="centerInside"
+                android:src="@mipmap/merchant" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="16px"
+                android:layout_marginLeft="53px"
+                android:layout_marginTop="14px"
+                android:includeFontPadding="false"
+                android:text="工商银行"
+                android:textColor="#333333"
+                android:textSize="16px" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="13px"
+                android:layout_alignParentBottom="true"
+                android:layout_marginLeft="53px"
+                android:layout_marginBottom="14px"
+                android:includeFontPadding="false"
+                android:text="存储卡 尾号8899"
+                android:textColor="#999999"
+                android:textSize="13px" />
+
+        </cn.xports.autoviews.AutoRelativeLayout>
+
+        <cn.xports.autoviews.AutoRelativeLayout
+            android:layout_width="match_parent"
+
+            android:layout_height="30px">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="53px"
+                android:text="优惠"
+                android:textColor="#333333"
+                android:textSize="13px" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="83px"
+                android:text="2.00 元"
+                android:textColor="#ffba95"
+                android:textSize="13px" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16px"
+                android:text="详情"
+                android:textColor="#247CF0"
+                android:textSize="13px" />
+
+
+        </cn.xports.autoviews.AutoRelativeLayout>
+
+    </cn.xports.autoviews.AutoLinearLayoutCompat>
+
+    <cn.xports.autoviews.AutoLinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="152px"
+        android:background="#FFFFFF"
+        android:orientation="vertical"
+        android:paddingLeft="16px"
+        app:divider="@drawable/line"
+        app:showDividers="middle">
+
+        <cn.xports.autoviews.AutoRelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48px">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="卡有效期"
+                android:textColor="#333333"
+                android:textSize="15px" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="70px"
+                android:text="月份/年份"
+                android:textColor="#cacaca"
+                android:textSize="15px" />
+
+            <ImageView
+                android:layout_width="15px"
+                android:layout_height="15px"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16px"
+                android:scaleType="centerInside"
+                android:src="@mipmap/attention" />
+
+        </cn.xports.autoviews.AutoRelativeLayout>
+
+        <cn.xports.autoviews.AutoRelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48px">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+
+                android:text="卡有效期"
+                android:textColor="#333333"
+                android:textSize="15px" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="70px"
+                android:text="月份/年份"
+                android:textColor="#cacaca"
+                android:textSize="15px" />
+
+            <ImageView
+                android:layout_width="15px"
+                android:layout_height="15px"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16px"
+                android:scaleType="centerInside"
+                android:src="@mipmap/attention" />
+
+        </cn.xports.autoviews.AutoRelativeLayout>
+
+        <cn.xports.autoviews.AutoRelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48px">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="卡有效期"
+                android:textColor="#333333"
+                android:textSize="15px" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="70px"
+                android:text="月份/年份"
+                android:textColor="#cacaca"
+                android:textSize="15px" />
+
+            <ImageView
+                android:layout_width="15px"
+                android:layout_height="15px"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16px"
+                android:scaleType="centerInside"
+                android:src="@mipmap/attention" />
+
+        </cn.xports.autoviews.AutoRelativeLayout>
+
+        <cn.xports.autoviews.AutoRelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48px">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="卡有效期"
+                android:textColor="#333333"
+                android:textSize="15px" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="70px"
+                android:text="月份/年份"
+                android:textColor="#cacaca"
+                android:textSize="15px" />
+
+            <ImageView
+                android:layout_width="15px"
+                android:layout_height="15px"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16px"
+                android:scaleType="centerInside"
+                android:src="@mipmap/attention" />
+
+        </cn.xports.autoviews.AutoRelativeLayout>
+    </cn.xports.autoviews.AutoLinearLayoutCompat>
+
+    <cn.xports.autoviews.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="48px"
+        android:layout_marginTop="360px"
+        android:background="#FFFFFF">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16px"
+            android:text="卡有效期"
+            android:textColor="#333333"
+            android:textSize="15px" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="86px"
+            android:text="月份/年份"
+            android:textColor="#cacaca"
+            android:textSize="15px" />
+
+        <ImageView
+            android:layout_width="15px"
+            android:layout_height="15px"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16px"
+            android:scaleType="centerInside"
+            android:src="@mipmap/attention" />
+
+    </cn.xports.autoviews.AutoRelativeLayout>
+
+
+    <cn.xports.autoviews.AutoRelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="424px">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="16px"
+            android:includeFontPadding="false"
+            android:text="同意"
+            android:textColor="#666666"
+            android:textSize="14px" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="40px"
+            android:includeFontPadding="false"
+            android:text="《用户协议》"
+            android:textColor="#247cf0"
+            android:textSize="14px" />
+    </cn.xports.autoviews.AutoRelativeLayout>
+
+    <Button
+        android:layout_width="343px"
+        android:layout_height="44px"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="458px"
+        android:background="#0080ff"
+        android:text="确认开通并支付"
+        android:textColor="#ffffff"
+        android:textSize="17px" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16px"
+        android:layout_marginTop="514px"
+        android:includeFontPadding="false"
+        android:text="同意并开通账户（可选）"
+        android:textColor="#999999"
+        android:textSize="13px" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20px"
+        android:includeFontPadding="false"
+        android:text="信息加密处理，仅用于验证"
+        android:textColor="#999999"
+        android:textSize="13px" />
+
+</cn.xports.autoviews.AutoRelativeLayout>
