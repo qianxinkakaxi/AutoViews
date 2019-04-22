@@ -394,23 +394,25 @@ autoSize boolean false 在autoviews里面设置，表示当前的viewgroup和其
 
 320*480
 
-
+![image](https://note.youdao.com/yws/public/resource/bd24ff9b39c238c024a1dd1a87a9f03d/xmlnote/E4CD3A86C91D434C9027973BF196AE75/928)
 
 
 480*854
 
+![image](https://note.youdao.com/yws/public/resource/bd24ff9b39c238c024a1dd1a87a9f03d/xmlnote/3E681EFC7C01408CB8502D6C2C88638F/925)
 
 
 768*1280
 
+![image](https://note.youdao.com/yws/public/resource/bd24ff9b39c238c024a1dd1a87a9f03d/xmlnote/F329C7E867124C5AABA1C36541835916/924)
 
 1080*1920
 
-
-
+![image](https://note.youdao.com/yws/public/resource/bd24ff9b39c238c024a1dd1a87a9f03d/xmlnote/69F508DBA51341EC88CDB18C42D66397/926)
 
 1440*2560
 
+![image](https://note.youdao.com/yws/public/resource/bd24ff9b39c238c024a1dd1a87a9f03d/xmlnote/EA2B39F185F0406EA72B28A34F8E4BCE/927)
 
 ### 5.注意点
 
