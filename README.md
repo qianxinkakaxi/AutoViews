@@ -576,7 +576,321 @@ void rInflate(XmlPullParser parser, View parent, Context context,
 ```
 
 #### b.view的测量流程
-未完待续。。。。。。
+
+view的绘制是从rootViewImpl里面调用performTraversals()函数开始的
+
+    private void performTraversals() {
+            // cache mView since it is used so much below...
+            ......
+            int childWidthMeasureSpec = getRootMeasureSpec(mWidth, lp.width);
+            int childHeightMeasureSpec = getRootMeasureSpec(mHeight, lp.height);
+           ......
+            // Ask host how big it wants to be
+            performMeasure(childWidthMeasureSpec, childHeightMeasureSpec);
+            ......
+            performLayout(lp, mWidth, mHeight);
+            ......
+            performDraw();
+        }
+
+Measure部分
+
+MeasureSpec是一个32位的int值，前2位代表specMode，后30位代表specSize
+
+specMode有3种：
+
+            /**
+             * Measure specification mode: The parent has not imposed any constraint
+             * on the child. It can be whatever size it wants.
+             */
+            public static final int UNSPECIFIED = 0 << MODE_SHIFT;
+    
+            /**
+             * Measure specification mode: The parent has determined an exact size
+             * for the child. The child is going to be given those bounds regardless
+             * of how big it wants to be.
+             */
+            public static final int EXACTLY     = 1 << MODE_SHIFT;
+    
+            /**
+             * Measure specification mode: The child can be as large as it wants up
+             * to the specified size.
+             */
+            public static final int AT_MOST     = 2 << MODE_SHIFT;
+
+UPSPECIFIED : 父容器对于子容器没有任何限制,子容器想要多大就多大
+
+EXACTLY: 父容器已经为子容器设置了尺寸,子容器应当服从这些边界,不论子容器想要多大的空间。
+
+AT_MOST：子容器可以是声明大小内的任意大小
+
+对于decorView来说：
+
+    private void performTraversals() {
+            // cache mView since it is used so much below...
+            ......
+            //这部分是测量devorView的
+            int childWidthMeasureSpec = getRootMeasureSpec(mWidth, lp.width);
+            int childHeightMeasureSpec = getRootMeasureSpec(mHeight, lp.height);
+            ......
+           
+        }
+
+    private static int getRootMeasureSpec(int windowSize, int rootDimension) {
+            int measureSpec;
+            switch (rootDimension) {
+    
+            case ViewGroup.LayoutParams.MATCH_PARENT:
+                // Window can't resize. Force root view to be windowSize.
+                measureSpec = MeasureSpec.makeMeasureSpec(windowSize, MeasureSpec.EXACTLY);
+                break;
+            case ViewGroup.LayoutParams.WRAP_CONTENT:
+                // Window can resize. Set max size for root view.
+                measureSpec = MeasureSpec.makeMeasureSpec(windowSize, MeasureSpec.AT_MOST);
+                break;
+            default:
+                // Window wants to be an exact size. Force root view to be that size.
+                measureSpec = MeasureSpec.makeMeasureSpec(rootDimension, MeasureSpec.EXACTLY);
+                break;
+            }
+            return measureSpec;
+        }
+
+最后执行performMeasure，里面decorView调用自身的measure方法
+
+    private void performMeasure(int childWidthMeasureSpec, int childHeightMeasureSpec) {
+            if (mView == null) {
+                return;
+            }
+            Trace.traceBegin(Trace.TRACE_TAG_VIEW, "measure");
+            try {
+                mView.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+            } finally {
+                Trace.traceEnd(Trace.TRACE_TAG_VIEW);
+            }
+        }
+
+decorview是一个linearlayout，会执行到view里面的measure方法
+
+    public final void measure(int widthMeasureSpec, int heightMeasureSpec) {
+            boolean optical = isLayoutModeOptical(this);
+            if (optical != isLayoutModeOptical(mParent)) {
+                Insets insets = getOpticalInsets();
+                int oWidth  = insets.left + insets.right;
+                int oHeight = insets.top  + insets.bottom;
+                widthMeasureSpec  = MeasureSpec.adjust(widthMeasureSpec,  optical ? -oWidth  : oWidth);
+                heightMeasureSpec = MeasureSpec.adjust(heightMeasureSpec, optical ? -oHeight : oHeight);
+            }
+    
+            // Suppress sign extension for the low bytes
+            long key = (long) widthMeasureSpec << 32 | (long) heightMeasureSpec & 0xffffffffL;
+            if (mMeasureCache == null) mMeasureCache = new LongSparseLongArray(2);
+    
+            final boolean forceLayout = (mPrivateFlags & PFLAG_FORCE_LAYOUT) == PFLAG_FORCE_LAYOUT;
+    
+            // Optimize layout by avoiding an extra EXACTLY pass when the view is
+            // already measured as the correct size. In API 23 and below, this
+            // extra pass is required to make LinearLayout re-distribute weight.
+            final boolean specChanged = widthMeasureSpec != mOldWidthMeasureSpec
+                    || heightMeasureSpec != mOldHeightMeasureSpec;
+            final boolean isSpecExactly = MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.EXACTLY
+                    && MeasureSpec.getMode(heightMeasureSpec) == MeasureSpec.EXACTLY;
+            final boolean matchesSpecSize = getMeasuredWidth() == MeasureSpec.getSize(widthMeasureSpec)
+                    && getMeasuredHeight() == MeasureSpec.getSize(heightMeasureSpec);
+            final boolean needsLayout = specChanged
+                    && (sAlwaysRemeasureExactly || !isSpecExactly || !matchesSpecSize);
+    
+            if (forceLayout || needsLayout) {
+                // first clears the measured dimension flag
+                mPrivateFlags &= ~PFLAG_MEASURED_DIMENSION_SET;
+    
+                resolveRtlPropertiesIfNeeded();
+    
+                int cacheIndex = forceLayout ? -1 : mMeasureCache.indexOfKey(key);
+                if (cacheIndex < 0 || sIgnoreMeasureCache) {
+                    // measure ourselves, this should set the measured dimension flag back
+                    onMeasure(widthMeasureSpec, heightMeasureSpec);
+                    mPrivateFlags3 &= ~PFLAG3_MEASURE_NEEDED_BEFORE_LAYOUT;
+                } else {
+                    long value = mMeasureCache.valueAt(cacheIndex);
+                    // Casting a long to int drops the high 32 bits, no mask needed
+                    setMeasuredDimensionRaw((int) (value >> 32), (int) value);
+                    mPrivateFlags3 |= PFLAG3_MEASURE_NEEDED_BEFORE_LAYOUT;
+                }
+    
+                // flag not set, setMeasuredDimension() was not invoked, we raise
+                // an exception to warn the developer
+                if ((mPrivateFlags & PFLAG_MEASURED_DIMENSION_SET) != PFLAG_MEASURED_DIMENSION_SET) {
+                    throw new IllegalStateException("View with id " + getId() + ": "
+                            + getClass().getName() + "#onMeasure() did not set the"
+                            + " measured dimension by calling"
+                            + " setMeasuredDimension()");
+                }
+    
+                mPrivateFlags |= PFLAG_LAYOUT_REQUIRED;
+            }
+    
+            mOldWidthMeasureSpec = widthMeasureSpec;
+            mOldHeightMeasureSpec = heightMeasureSpec;
+    
+            mMeasureCache.put(key, ((long) mMeasuredWidth) << 32 |
+                    (long) mMeasuredHeight & 0xffffffffL); // suppress sign extension
+        }
+
+mearure是一个final方法，不可以重写,真正的 测量实在onMeasure里面实现的，所以这样传递下来之后，就走到了linearLayout(viewgruop)的onMeasure里 在viewgrop里的onMeasure方法里面又会走到measureChildWithMargin
+
+    protected void measureChildWithMargins(View child,
+                int parentWidthMeasureSpec, int widthUsed,
+                int parentHeightMeasureSpec, int heightUsed) {
+            final MarginLayoutParams lp = (MarginLayoutParams) child.getLayoutParams();
+    
+            final int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec,
+                    mPaddingLeft + mPaddingRight + lp.leftMargin + lp.rightMargin
+                            + widthUsed, lp.width);
+            final int childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec,
+                    mPaddingTop + mPaddingBottom + lp.topMargin + lp.bottomMargin
+                            + heightUsed, lp.height);
+    
+            child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+        }
+
+这个会生成child的widthMeasureSpec和heightMeasureSpec
+
+    public static int getChildMeasureSpec(int spec, int padding, int childDimension) {
+            int specMode = MeasureSpec.getMode(spec);
+            int specSize = MeasureSpec.getSize(spec);
+    
+            int size = Math.max(0, specSize - padding);
+    
+            int resultSize = 0;
+            int resultMode = 0;
+    
+            switch (specMode) {
+            // Parent has imposed an exact size on us
+            case MeasureSpec.EXACTLY:
+                if (childDimension >= 0) {
+                    resultSize = childDimension;
+                    resultMode = MeasureSpec.EXACTLY;
+                } else if (childDimension == LayoutParams.MATCH_PARENT) {
+                    // Child wants to be our size. So be it.
+                    resultSize = size;
+                    resultMode = MeasureSpec.EXACTLY;
+                } else if (childDimension == LayoutParams.WRAP_CONTENT) {
+                    // Child wants to determine its own size. It can't be
+                    // bigger than us.
+                    resultSize = size;
+                    resultMode = MeasureSpec.AT_MOST;
+                }
+                break;
+    
+            // Parent has imposed a maximum size on us
+            case MeasureSpec.AT_MOST:
+                if (childDimension >= 0) {
+                    // Child wants a specific size... so be it
+                    resultSize = childDimension;
+                    resultMode = MeasureSpec.EXACTLY;
+                } else if (childDimension == LayoutParams.MATCH_PARENT) {
+                    // Child wants to be our size, but our size is not fixed.
+                    // Constrain child to not be bigger than us.
+                    resultSize = size;
+                    resultMode = MeasureSpec.AT_MOST;
+                } else if (childDimension == LayoutParams.WRAP_CONTENT) {
+                    // Child wants to determine its own size. It can't be
+                    // bigger than us.
+                    resultSize = size;
+                    resultMode = MeasureSpec.AT_MOST;
+                }
+                break;
+    
+            // Parent asked to see how big we want to be
+            case MeasureSpec.UNSPECIFIED:
+                if (childDimension >= 0) {
+                    // Child wants a specific size... let him have it
+                    resultSize = childDimension;
+                    resultMode = MeasureSpec.EXACTLY;
+                } else if (childDimension == LayoutParams.MATCH_PARENT) {
+                    // Child wants to be our size... find out how big it should
+                    // be
+                    resultSize = View.sUseZeroUnspecifiedMeasureSpec ? 0 : size;
+                    resultMode = MeasureSpec.UNSPECIFIED;
+                } else if (childDimension == LayoutParams.WRAP_CONTENT) {
+                    // Child wants to determine its own size.... find out how
+                    // big it should be
+                    resultSize = View.sUseZeroUnspecifiedMeasureSpec ? 0 : size;
+                    resultMode = MeasureSpec.UNSPECIFIED;
+                }
+                break;
+            }
+            //noinspection ResourceType
+            return MeasureSpec.makeMeasureSpec(resultSize, resultMode);
+        }
+
+这个可以看出，子view的高度由两个方面决定，一个是父view的规格，另外一个是它自身的layoutParams
+
+
+
+另外在viewgroup的提供了marginChildren方法，其实这个和上面的measureChildWithMargins方法是一样的效果，withMargins只是去除了margin的数值
+
+    protected void measureChildren(int widthMeasureSpec, int heightMeasureSpec) {
+            final int size = mChildrenCount;
+            final View[] children = mChildren;
+            for (int i = 0; i < size; ++i) {
+                final View child = children[i];
+                if ((child.mViewFlags & VISIBILITY_MASK) != GONE) {
+                    measureChild(child, widthMeasureSpec, heightMeasureSpec);
+                }
+            }
+        }
+
+里面调用
+
+    protected void measureChild(View child, int parentWidthMeasureSpec,
+                int parentHeightMeasureSpec) {
+            final LayoutParams lp = child.getLayoutParams();
+    
+            final int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec,
+                    mPaddingLeft + mPaddingRight, lp.width);
+            final int childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec,
+                    mPaddingTop + mPaddingBottom, lp.height);
+    
+            child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
+        }
+
+如果childView也是一个viewgroup，又会重新循环viewgroup的measure过程，如果child只是普通的view的话就是执行到view的measure过程，最后就是执行到view的onMeasure代码里面
+
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+            setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec),
+                                 getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec));
+        }
+
+getSuggestedMinimumWidth方法，这个方法手下判断view有没有设置backgroundf，如果没有的话就返回xml Android：minWidth的值，如果有的话就去background的宽度和minWidth的大值，getSuggestedMinimumHeight依次类推
+
+    protected int getSuggestedMinimumWidth() {
+            return (mBackground == null) ? mMinWidth : max(mMinWidth, mBackground.getMinimumWidth());
+        }
+
+getDefaultSize是决定view的真正的宽度高度，UNSPECIFIED一般可以混略不计，（有一个特殊的地方在scrollview里面，它传给子view的specMode就是UNSPECIFIED，这是导致listview在scrollview里面只显示一行的关键）,MeasureSpec.AT_MOST对应xml里面的是wrap_content，MeasureSpec.EXACTLY对应的是xml里面我们写的固定的值和match_parent，例如：20dp,20px之类的， 代码里可以看出自定义view的时候如果不重写onMeasure并设置wrap_content的大小，那实际上就和match_parent一样的性质，解决方法就是onMeasure方法里面对spacMode为MeasureSpec.AT_MOST做特殊的处理
+
+    public static int getDefaultSize(int size, int measureSpec) {
+            int result = size;
+            int specMode = MeasureSpec.getMode(measureSpec);
+            int specSize = MeasureSpec.getSize(measureSpec);
+    
+            switch (specMode) {
+            case MeasureSpec.UNSPECIFIED:
+                result = size;
+                break;
+            case MeasureSpec.AT_MOST:
+            case MeasureSpec.EXACTLY:
+                result = specSize;
+                break;
+            }
+            return result;
+        }
+
+最后调用setMeasuredDimension设置view的测量的尺寸
+
+通过上面的分析我们可以看出一个view的宽度和高度是由父类的给其的spec和自身的layoutParams决定的（不考虑UNSPECIFIED情况，因为一般不会用到）有一个特殊的地方在于，如果一个view的width或者height的specMode是exactly并且我们xml写的固定值，那么这个view的最终测量的值，如果我们人为不甘于的话，就是我们写在xml里的值（linearLayout的权重另外一说）
 
 
 
