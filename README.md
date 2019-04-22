@@ -892,6 +892,8 @@ getDefaultSize是决定view的真正的宽度高度，UNSPECIFIED一般可以混
 
 最后调用setMeasuredDimension设置view的测量的尺寸
 
+![image](https://note.youdao.com/yws/public/resource/d2ccfe97dc447037a623612c64b3c90b/xmlnote/4BF59087FCAC408F9AB3B0399D372626/402)
+
 通过上面的分析我们可以看出一个view的宽度和高度是由父类的给其的spec和自身的layoutParams决定的（不考虑UNSPECIFIED情况，因为一般不会用到）有一个特殊的地方在于，如果一个view的width或者height的specMode是exactly并且我们xml写的固定值，那么这个view的最终测量的值，如果我们人为不甘于的话，就是我们写在xml里的值（linearLayout的权重另外一说）
 
 
